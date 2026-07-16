@@ -21,6 +21,9 @@
     ],
     "client": [
       "io.github.thesmoothrere.enchtell.client.EnchTellClient"
+    ],
+    "relib": [
+      "io.github.thesmoothrere.enchtell.config.EnchTellConfig"
     ]
   },
   "depends": {
