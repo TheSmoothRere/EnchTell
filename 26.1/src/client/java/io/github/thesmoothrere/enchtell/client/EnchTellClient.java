@@ -1,6 +1,9 @@
 package io.github.thesmoothrere.enchtell.client;
 
 import io.github.thesmoothrere.enchtell.Constants;
+import io.github.thesmoothrere.enchtell.config.EnchTellConfig;
+import io.github.thesmoothrere.enchtell.utils.ShowType;
+import io.github.thesmoothrere.relib.config.ConfigManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,6 +24,7 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class EnchTellClient implements ClientModInitializer {
+    private static final EnchTellConfig CONFIG = ConfigManager.get(EnchTellConfig.class);
 
     @Override
     public void onInitializeClient() {
@@ -30,15 +34,18 @@ public class EnchTellClient implements ClientModInitializer {
 
     private static void onTooltip(ItemStack itemStack, Item.TooltipContext tooltipContext,
                                   TooltipFlag tooltipFlag, List<Component> components) {
+        ShowType showType = CONFIG.showType().getValue();
+
+        boolean isAlways = showType == ShowType.ALWAYS;
 
         ItemEnchantments normalEnchantments = itemStack.get(DataComponents.ENCHANTMENTS);
-        if (normalEnchantments != null && !normalEnchantments.isEmpty()) {
+        if (normalEnchantments != null && !normalEnchantments.isEmpty() && isAlways) {
             insertDescriptions(normalEnchantments, components);
         }
 
         // Target stored enchantments (Enchanted Books, or modded items storing spell templates)
         ItemEnchantments storedEnchantments = itemStack.get(DataComponents.STORED_ENCHANTMENTS);
-        if (storedEnchantments != null && !storedEnchantments.isEmpty()) {
+        if (storedEnchantments != null && !storedEnchantments.isEmpty()  && isAlways) {
             insertDescriptions(storedEnchantments, components);
         }
     }
@@ -51,33 +58,37 @@ public class EnchTellClient implements ClientModInitializer {
             // Get the exact visual name (e.g., "Sharpness V" or "Curse of Vanishing")
             String displayName = Enchantment.getFullname(holder, level).getString();
 
-            holder.unwrapKey().ifPresent(key -> {
-                String keyNamespace = key.identifier().getNamespace();
-                String keyPath = key.identifier().getPath();
-
-                String translatableKeyDesc = "enchantment." + keyNamespace + "." + keyPath + ".desc";
-
-                if (!I18n.exists(translatableKeyDesc)) return;
-
-                // Find where this text is inside the tooltip list
-                int insertIndex = -1;
-                for (int i = 0; i < components.size(); i++) {
-                    if (components.get(i).getString().contains(displayName)) {
-                        insertIndex = i;
-                        break;
-                    }
-                }
-
-                // If we found the line, insert our description right beneath it
-                if (insertIndex != -1) {
-                    Component desc = Component.empty()
-                            .append(CommonComponents.SPACE)
-                            .append(Component.translatable(translatableKeyDesc))
-                            .withStyle(ChatFormatting.DARK_GRAY);
-
-                    components.add(insertIndex + 1, desc);
-                }
-            });
+            unwrapKeyAndFindLineToInsertDescription(components, holder, displayName);
         }
+    }
+
+    private static void unwrapKeyAndFindLineToInsertDescription(List<Component> components, Holder<Enchantment> holder, String displayName) {
+        holder.unwrapKey().ifPresent(key -> {
+            String keyNamespace = key.identifier().getNamespace();
+            String keyPath = key.identifier().getPath();
+
+            String translatableKeyDesc = "enchantment." + keyNamespace + "." + keyPath + ".desc";
+
+            if (!I18n.exists(translatableKeyDesc)) return;
+
+            // Find where this text is inside the tooltip list
+            int insertIndex = -1;
+            for (int i = 0; i < components.size(); i++) {
+                if (components.get(i).getString().contains(displayName)) {
+                    insertIndex = i;
+                    break;
+                }
+            }
+
+            // If we found the line, insert our description right beneath it
+            if (insertIndex != -1) {
+                Component desc = Component.empty()
+                        .append(CommonComponents.SPACE)
+                        .append(Component.translatable(translatableKeyDesc))
+                        .withStyle(ChatFormatting.DARK_GRAY);
+
+                components.add(insertIndex + 1, desc);
+            }
+        });
     }
 }
