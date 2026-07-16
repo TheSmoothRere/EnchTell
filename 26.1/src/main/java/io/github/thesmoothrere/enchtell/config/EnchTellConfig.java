@@ -11,6 +11,7 @@ import io.github.thesmoothrere.relib.config.option.EnumOption;
 public class EnchTellConfig implements ConfigApi {
     private final EnumOption<ShowType> showType = new EnumOption<>("showType", ShowType.ALWAYS);
     private final BooleanOption showOnItems = new BooleanOption("showOnItems", false);
+    private final BooleanOption debug = new BooleanOption("debug", false);
 
     public EnumOption<ShowType> showType() {
         return showType;
@@ -18,5 +19,9 @@ public class EnchTellConfig implements ConfigApi {
 
     public BooleanOption showOnItems() {
         return showOnItems;
+    }
+
+    public BooleanOption debug() {
+        return debug;
     }
 }

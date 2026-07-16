@@ -92,7 +92,7 @@ public class EnchTellClient implements ClientModInitializer {
         holder.unwrapKey().ifPresent(key -> {
             String translatableKeyDesc = "enchantment." + key.identifier().getNamespace() + "." + key.identifier().getPath() + ".desc";
 
-            if (!I18n.exists(translatableKeyDesc)) return;
+            if (!I18n.exists(translatableKeyDesc) && !CONFIG.debug().getValue()) return;
 
             // Find where this text is inside the tooltip list
             int insertIndex = -1;
