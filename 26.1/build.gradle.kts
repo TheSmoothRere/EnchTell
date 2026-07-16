@@ -83,6 +83,7 @@ tasks.processResources {
         "author" to modAuthor,
         "license" to modLicense,
         "minecraftVersion" to minecraftVersion,
+        "fabricApiVersion" to fabricApiVersion,
         "javaVersion" to javaVersion
     )
 
