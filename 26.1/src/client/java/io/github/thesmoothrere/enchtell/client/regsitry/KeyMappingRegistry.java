@@ -10,6 +10,10 @@ import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
 public final class KeyMappingRegistry {
+    private KeyMappingRegistry() {
+        /* This utility class should not be instantiated */
+    }
+
     private static final KeyMapping.Category ENCH_TELL_CATEGORY = KeyMapping.Category.register(
             Identifier.fromNamespaceAndPath(Constants.MOD_ID, "main")
     );
