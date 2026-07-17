@@ -12,7 +12,7 @@
   "contact": {
     "homepage":"https://github.com/TheSmoothRere/EnchTell",
     "source": "https://github.com/TheSmoothRere/EnchTell",
-    "issue": "https://github.com/TheSmoothRere/EnchTell/issues"
+    "issues": "https://github.com/TheSmoothRere/EnchTell/issues"
   },
   "environment": "client",
   "entrypoints": {
